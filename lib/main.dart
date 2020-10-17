@@ -1,4 +1,5 @@
-import 'package:finance_app/web_view.dart';
+import 'package:finance_app/SingletonProvider.dart';
+import 'package:finance_app/end_drawer.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -34,8 +35,6 @@ class App extends State<MyApp> {
   void initState() {
     super.initState();
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    // flutterWebviewPlugin.evalJavascript(
-    //     "const ab = document.querySelector(\"#navbar > div > button.btn.btn-info.mt-2.mr-2\"); p.click();");
   }
 
   @override
@@ -44,7 +43,7 @@ class App extends State<MyApp> {
     super.dispose();
   }
 
-  var test;
+  var _webViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -56,34 +55,7 @@ class App extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: Text('Drawer Header'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                title: Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-              ListTile(
-                title: Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-            ],
-          ),
-        ),
+        endDrawer: EndDrawer(_webViewController),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(0.0),
           child: AppBar(
@@ -92,19 +64,9 @@ class App extends State<MyApp> {
           ),
         ),
         body: WebView(
-          onPageFinished: (String url) {
-            // should be called when page finishes loading
-            print(url);
-          },
           onWebViewCreated: (WebViewController controller) {
-            test = controller;
-          },
-          javascriptChannels: {
-            JavascriptChannel(
-                name: 'TEST',
-                onMessageReceived: (JavascriptMessage message) {
-                  print("ahaha" + message.message);
-                })
+            var singleton = new Singleton(controller);
+            _webViewController = controller;
           },
           initialUrl: 'https://pysoftware.github.io/finance-app/',
           javascriptMode: JavascriptMode.unrestricted,
@@ -112,7 +74,8 @@ class App extends State<MyApp> {
         // body: MainPageWebView(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            test.evaluateJavascript('window.setIsShowingAddCostsModal()');
+            _webViewController
+                .evaluateJavascript('window.setIsShowingAddCostsModal()');
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.green,
