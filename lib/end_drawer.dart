@@ -6,11 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'SingletonProvider.dart';
 
 class EndDrawer extends StatelessWidget {
-  final WebViewController _webViewController;
   final singleton = Singleton.instance;
-  final GlobalKey stickyKey = GlobalKey();
-
-  EndDrawer(this._webViewController);
 
   double _getScreenHeight(context) {
     double height = MediaQuery.of(context).size.height;
@@ -28,23 +24,24 @@ class EndDrawer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Container(
-              key: stickyKey,
-              margin: EdgeInsets.only(bottom: _getScreenHeight(context) * 0.4),
+              margin: EdgeInsets.only(bottom: _getScreenHeight(context) * 0.38),
               child: Column(
                 children: <Widget>[
                   DrawerButton(
                       buttonText: 'Добавить категорию',
                       icon: Icon(Icons.post_add),
                       onClick: () {
-                        _webViewController.evaluateJavascript(
+                        singleton.webViewController.evaluateJavascript(
                             'window.setIsShowingAddCategoryModal()');
+                        Navigator.pop(context);
                       }),
                   DrawerButton(
                       buttonText: 'Добавить доход',
                       icon: Icon(Icons.attach_money),
                       onClick: () {
-                        _webViewController.evaluateJavascript(
+                        singleton.webViewController.evaluateJavascript(
                             'window.setIsShowingAddIncomesModal()');
+                        Navigator.pop(context);
                       }),
                 ],
               )),
@@ -52,7 +49,8 @@ class EndDrawer extends StatelessWidget {
               width: 200,
               child: FlatButton(
                 onPressed: () {
-                  _webViewController.evaluateJavascript('window.logout()');
+                  singleton.webViewController.evaluateJavascript('window.logout()');
+                  Navigator.pop(context);
                 },
                 child: Row(
                   children: <Widget>[

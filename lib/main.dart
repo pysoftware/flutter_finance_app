@@ -55,7 +55,7 @@ class App extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Scaffold(
-        endDrawer: EndDrawer(_webViewController),
+        endDrawer: EndDrawer(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(0.0),
           child: AppBar(
@@ -76,6 +76,7 @@ class App extends State<MyApp> {
           onPressed: () {
             _webViewController
                 .evaluateJavascript('window.setIsShowingAddCostsModal()');
+            Navigator.pop(context);
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.green,
